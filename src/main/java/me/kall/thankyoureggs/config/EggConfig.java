@@ -19,11 +19,13 @@ import java.util.stream.Collectors;
 public class EggConfig {
     public static final ModConfigSpec INSTANCE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> CHICKENS_LOVE;
+    public static final ForgeConfigSpec.IntValue RADIUS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.push("ThankYourEggs");
         CHICKENS_LOVE = builder.defineList("BlocksThatChickensLove", Lists.newArrayList("create:belt"), () -> "block:registry_name", Predicates.alwaysTrue());
+        RADIUS = builder.comment("Note: 1 means the searching area will be expanded to 3*3=9 chunks. If you are thinking about the chicken's current chunk only, you may nedd to write 0").defineInRange("AroundRadiusChunksThatChickensSearchForLovedBlocks", 1, 0, Integer.MAX_VALUE);
         builder.pop();
         INSTANCE = builder.build();
     }
