@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class EggConfig {
     public static final ModConfigSpec INSTANCE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> CHICKENS_LOVE;
-    public static final ForgeConfigSpec.IntValue RADIUS;
+    public static final ModConfigSpec.IntValue RADIUS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
