@@ -3,6 +3,7 @@ package me.kall.thankyoureggs.goal;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import me.kall.thankyoureggs.api.EggLayer;
+import me.kall.thankyoureggs.config.EggConfig;
 import me.kall.thankyoureggs.data.ToLayEgg;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -64,9 +65,10 @@ public class LayEggGoal extends Goal {
         if (dimMap == null || dimMap.isEmpty()) return null;
 
         ChunkPos chickenChunk = this.chicken.chunkPosition();
+        int radius = EggConfig.RADIUS.get();
 
-        for (int chunkX = chickenChunk.x - 1; chunkX <= chickenChunk.x + 1; chunkX++) {
-            for (int chunkZ = chickenChunk.z - 1; chunkZ <= chickenChunk.z + 1; chunkZ++) {
+        for (int chunkX = chickenChunk.x - radius; chunkX <= chickenChunk.x + radius; chunkX++) {
+            for (int chunkZ = chickenChunk.z - radius; chunkZ <= chickenChunk.z + radius; chunkZ++) {
                 LongSet blocks = dimMap.get(ChunkPos.asLong(chunkX, chunkZ));
                 if (blocks == null || blocks.isEmpty()) continue;
                 return BlockPos.of(blocks.longIterator().nextLong());
