@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
@@ -24,7 +25,7 @@ public class ToLayEgg extends SavedData {
     public static final String DATA_NAME = "tye_egg_positions";
 
     public static @NotNull ToLayEgg get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(ToLayEgg::load, ToLayEgg::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new Factory<>(ToLayEgg::new, (tag, provider) -> load(tag)), DATA_NAME);
     }
 
     public void add(ResourceLocation dim, long chunk, long block) {
@@ -53,7 +54,7 @@ public class ToLayEgg extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         ListTag dimList = new ListTag();
 
         for (Map.Entry<ResourceLocation, Long2ObjectMap<LongSet>> dimEntry : positions.entrySet()) {
