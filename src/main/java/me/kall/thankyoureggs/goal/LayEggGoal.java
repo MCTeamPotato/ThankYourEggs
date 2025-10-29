@@ -23,6 +23,7 @@ import java.util.EnumSet;
 public class LayEggGoal extends Goal {
     private final Chicken chicken;
     private BlockPos target;
+    private long timeout;
 
     public LayEggGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -37,11 +38,12 @@ public class LayEggGoal extends Goal {
     @Override
     public void start() {
         this.target = getTarget();
+        this.timeout = System.currentTimeMillis() + 30_000;
     }
 
     @Override
     public boolean canContinueToUse() {
-        return ((EggLayer) this.chicken).tye$wannaLayEgg() && this.target != null && !this.chicken.getNavigation().isDone();
+        return this.canUse();
     }
 
     @Override
@@ -49,12 +51,14 @@ public class LayEggGoal extends Goal {
         if (this.target == null) return;
         this.chicken.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 1.0D);
 
-        if (this.chicken.position().distanceToSqr(Vec3.atCenterOf(target)) < 2.0D) {
+        if (this.chicken.position().distanceToSqr(Vec3.atCenterOf(target)) < 2.0D || System.currentTimeMillis() >= this.timeout) {
             this.chicken.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.chicken.getRandom().nextFloat() - this.chicken.getRandom().nextFloat()) * 0.2F + 1.0F);
             this.chicken.spawnAtLocation(Items.EGG);
             this.chicken.gameEvent(GameEvent.ENTITY_PLACE);
             this.chicken.eggTime = this.chicken.getRandom().nextInt(6000) + 6000;
             ((EggLayer) this.chicken).tye$setWannaLayEgg(false);
+            this.target = null;
+            this.chicken.getNavigation().stop();
         }
     }
 
