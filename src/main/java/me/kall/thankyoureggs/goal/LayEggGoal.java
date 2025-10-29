@@ -64,12 +64,11 @@ public class LayEggGoal extends Goal {
         Long2ObjectMap<LongSet> dimMap = data.posMap().get(dim);
         if (dimMap == null || dimMap.isEmpty()) return null;
 
-        int chickenX = this.chicken.blockPosition().getX() >> 4;
-        int chickenZ = this.chicken.blockPosition().getZ() >> 4;
+        ChunkPos chickenChunk = new ChunkPos(this.chicken.blockPosition().getX() >> 4, this.chicken.blockPosition().getZ() >> 4);
         int radius = EggConfig.RADIUS.get();
 
-        for (int chunkX = chickenX - radius; chunkX <= chickenX + radius; chunkX++) {
-            for (int chunkZ = chickenZ - radius; chunkZ <= chickenZ + radius; chunkZ++) {
+        for (int chunkX = chickenChunk.x - radius; chunkX <= chickenChunk.x + radius; chunkX++) {
+            for (int chunkZ = chickenChunk.z - radius; chunkZ <= chickenChunk.z + radius; chunkZ++) {
                 long chunk = ChunkPos.asLong(chunkX, chunkZ);
                 LongSet blocks = dimMap.get(ChunkPos.asLong(chunkX, chunkZ));
                 if (blocks == null || blocks.isEmpty()) continue;
