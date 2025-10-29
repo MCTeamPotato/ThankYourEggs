@@ -58,7 +58,7 @@ public class LayEggGoal extends Goal {
     }
 
     private @Nullable BlockPos getTarget() {
-        ServerLevel level = (ServerLevel) this.chicken.level();
+        ServerLevel level = (ServerLevel) this.chicken.level;
         ResourceLocation dim = level.dimension().location();
 
         Long2ObjectMap<LongSet> dimMap = ToLayEgg.get(level).posMap().get(dim);
