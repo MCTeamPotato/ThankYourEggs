@@ -2,6 +2,7 @@ package me.kall.thankyoureggs.goal;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import me.kall.thankyoureggs.api.ChickensLove;
 import me.kall.thankyoureggs.api.EggLayer;
 import me.kall.thankyoureggs.config.EggConfig;
 import me.kall.thankyoureggs.data.ToLayEgg;
@@ -61,7 +62,8 @@ public class LayEggGoal extends Goal {
         ServerLevel level = (ServerLevel) this.chicken.level();
         ResourceLocation dim = level.dimension().location();
 
-        Long2ObjectMap<LongSet> dimMap = ToLayEgg.get(level).posMap().get(dim);
+        ToLayEgg data = ToLayEgg.get(level);
+        Long2ObjectMap<LongSet> dimMap = data.posMap().get(dim);
         if (dimMap == null || dimMap.isEmpty()) return null;
 
         ChunkPos chickenChunk = this.chicken.chunkPosition();
@@ -69,9 +71,16 @@ public class LayEggGoal extends Goal {
 
         for (int chunkX = chickenChunk.x - radius; chunkX <= chickenChunk.x + radius; chunkX++) {
             for (int chunkZ = chickenChunk.z - radius; chunkZ <= chickenChunk.z + radius; chunkZ++) {
+                long chunk = ChunkPos.asLong(chunkX, chunkZ);
                 LongSet blocks = dimMap.get(ChunkPos.asLong(chunkX, chunkZ));
                 if (blocks == null || blocks.isEmpty()) continue;
-                return BlockPos.of(blocks.longIterator().nextLong());
+                long block = blocks.longIterator().nextLong();
+                BlockPos candidate = BlockPos.of(block);
+                if (((ChickensLove)level.getBlockState(candidate).getBlock()).tye$isChickensLove()) {
+                    return candidate;
+                } else {
+                    data.remove(dim, chunk, block);
+                }
             }
         }
         return null;
