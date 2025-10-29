@@ -76,7 +76,7 @@ public class LayEggGoal extends Goal {
                 long chunk = ChunkPos.asLong(chunkX, chunkZ);
                 LongSet blocks = dimMap.get(ChunkPos.asLong(chunkX, chunkZ));
                 if (blocks == null || blocks.isEmpty()) continue;
-                long block = blocks.longIterator().nextLong();
+                long block = blocks.iterator().nextLong();
                 BlockPos candidate = BlockPos.of(block);
                 if (((ChickensLove)level.getBlockState(candidate).getBlock()).tye$isChickensLove()) {
                     return candidate;
