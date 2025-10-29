@@ -25,7 +25,7 @@ public class EggConfig {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.push("ThankYourEggs");
         CHICKENS_LOVE = builder.defineList("BlocksThatChickensLove", Lists.newArrayList("create:belt"), () -> "block:registry_name", Predicates.alwaysTrue());
-        RADIUS = builder.comment("Note: 1 means the searching area will be expanded to 3*3=9 chunks. If you are thinking about the chicken's current chunk only, you may nedd to write 0").defineInRange("AroundRadiusChunksThatChickensSearchForLovedBlocks", 1, 0, Integer.MAX_VALUE);
+        RADIUS = builder.comment("Note: 1 means the searching area will be expanded to 3*3=9 chunks. If you are thinking about the chicken's current chunk only, you may need to write 0").defineInRange("AroundRadiusChunksThatChickensSearchForLovedBlocks", 1, 0, Integer.MAX_VALUE);
         builder.pop();
         INSTANCE = builder.build();
     }
