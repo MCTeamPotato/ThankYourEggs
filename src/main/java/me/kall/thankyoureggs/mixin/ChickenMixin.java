@@ -2,6 +2,7 @@ package me.kall.thankyoureggs.mixin;
 
 import me.kall.thankyoureggs.api.EggLayer;
 import me.kall.thankyoureggs.goal.LayEggGoal;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.animal.Chicken;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -33,5 +34,15 @@ public abstract class ChickenMixin implements EggLayer {
     @Override
     public void tye$setWannaLayEgg(boolean wanna) {
         this.tye$wannaLayEgg = wanna;
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void read(CompoundTag compound, CallbackInfo ci) {
+        this.tye$wannaLayEgg = compound.getBoolean("WannaLayEgg");
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void write(CompoundTag compound, CallbackInfo ci) {
+        compound.putBoolean("WannaLayEgg", this.tye$wannaLayEgg);
     }
 }

@@ -1,3 +1,2 @@
-# 1.0.1
-- Fix for potential config changes
-- Add timeout for chicken's moving.
+# 1.0.2
+- Fix chickens no longer want to lay eggs after game restart
