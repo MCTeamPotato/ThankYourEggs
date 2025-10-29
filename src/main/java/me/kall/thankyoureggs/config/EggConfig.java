@@ -32,7 +32,7 @@ public class EggConfig {
 
     public static void setup(@NotNull FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            Set<ResourceLocation> chickensLove = CHICKENS_LOVE.get().stream().map(ResourceLocation::parse).collect(Collectors.toSet());
+            Set<ResourceLocation> chickensLove = CHICKENS_LOVE.get().stream().map(ResourceLocation::tryParse).collect(Collectors.toSet());
             for (Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
                 ((ChickensLove)entry.getValue()).tye$setIsChickensLove(chickensLove.contains(entry.getKey().location()));
             }

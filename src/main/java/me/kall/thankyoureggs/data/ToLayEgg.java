@@ -14,6 +14,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -23,8 +24,12 @@ public class ToLayEgg extends SavedData {
 
     public static final String DATA_NAME = "tye_egg_positions";
 
+    public ToLayEgg() {
+        super(DATA_NAME);
+    }
+
     public static @NotNull ToLayEgg get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(ToLayEgg::load, ToLayEgg::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(ToLayEgg::new, DATA_NAME);
     }
 
     public void add(ResourceLocation dim, long chunk, long block) {
@@ -80,21 +85,21 @@ public class ToLayEgg extends SavedData {
         return tag;
     }
 
-    public static @NotNull ToLayEgg load(@NotNull CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         ToLayEgg data = new ToLayEgg();
-        ListTag dimList = tag.getList("positions", Tag.TAG_COMPOUND);
+        ListTag dimList = tag.getList("positions", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < dimList.size(); i++) {
             CompoundTag dimTag = dimList.getCompound(i);
-            ResourceLocation dim = ResourceLocation.parse(dimTag.getString("dim"));
+            ResourceLocation dim = ResourceLocation.tryParse(dimTag.getString("dim"));
             Long2ObjectMap<LongSet> chunkMap = new Long2ObjectOpenHashMap<>();
 
-            ListTag chunkList = dimTag.getList("chunks", Tag.TAG_COMPOUND);
+            ListTag chunkList = dimTag.getList("chunks", Constants.NBT.TAG_COMPOUND);
             for (int j = 0; j < chunkList.size(); j++) {
                 CompoundTag chunkTag = chunkList.getCompound(j);
                 long chunk = chunkTag.getLong("chunk");
                 LongSet blocks = new LongOpenHashSet();
-                ListTag blockList = chunkTag.getList("blocks", Tag.TAG_LONG);
+                ListTag blockList = chunkTag.getList("blocks", Constants.NBT.TAG_LONG);
                 for (Tag value : blockList) {
                     blocks.add(((LongTag) value).getAsLong());
                 }
@@ -103,7 +108,5 @@ public class ToLayEgg extends SavedData {
 
             data.positions.put(dim, chunkMap);
         }
-
-        return data;
     }
 }

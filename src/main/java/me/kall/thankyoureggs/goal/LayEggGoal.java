@@ -13,7 +13,6 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +50,6 @@ public class LayEggGoal extends Goal {
         if (this.chicken.position().distanceToSqr(Vec3.atCenterOf(target)) < 2.0D) {
             this.chicken.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.chicken.getRandom().nextFloat() - this.chicken.getRandom().nextFloat()) * 0.2F + 1.0F);
             this.chicken.spawnAtLocation(Items.EGG);
-            this.chicken.gameEvent(GameEvent.ENTITY_PLACE);
             this.chicken.eggTime = this.chicken.getRandom().nextInt(6000) + 6000;
             ((EggLayer) this.chicken).tye$setWannaLayEgg(false);
         }
@@ -64,14 +62,15 @@ public class LayEggGoal extends Goal {
         Long2ObjectMap<LongSet> dimMap = ToLayEgg.get(level).posMap().get(dim);
         if (dimMap == null || dimMap.isEmpty()) return null;
 
-        ChunkPos chickenChunk = this.chicken.chunkPosition();
+        int chickenX = this.chicken.blockPosition().getX() >> 4;
+        int chickenZ = this.chicken.blockPosition().getZ() >> 4;
         int radius = EggConfig.RADIUS.get();
 
-        for (int chunkX = chickenChunk.x - radius; chunkX <= chickenChunk.x + radius; chunkX++) {
-            for (int chunkZ = chickenChunk.z - radius; chunkZ <= chickenChunk.z + radius; chunkZ++) {
+        for (int chunkX = chickenX - radius; chunkX <= chickenX + radius; chunkX++) {
+            for (int chunkZ = chickenZ - radius; chunkZ <= chickenZ + radius; chunkZ++) {
                 LongSet blocks = dimMap.get(ChunkPos.asLong(chunkX, chunkZ));
                 if (blocks == null || blocks.isEmpty()) continue;
-                return BlockPos.of(blocks.longIterator().nextLong());
+                return BlockPos.of(blocks.iterator().nextLong());
             }
         }
         return null;
