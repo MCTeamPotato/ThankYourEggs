@@ -9,6 +9,7 @@
   "client": [
   ],
   "mixins": [
+    "AbstractBirdEntityMixin",
     "BlockMixin",
     "ChickenMixin",
     "ServerLevelMixin"

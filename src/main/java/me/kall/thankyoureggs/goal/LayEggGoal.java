@@ -9,30 +9,27 @@ import me.kall.thankyoureggs.data.ToLayEgg;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
 public class LayEggGoal extends Goal {
-    private final Chicken chicken;
+    private final Mob eggLayer;
     private BlockPos target;
     private long timeout;
 
-    public LayEggGoal(Chicken chicken) {
-        this.chicken = chicken;
+    public LayEggGoal(Mob eggLayer) {
+        this.eggLayer = eggLayer;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
     public boolean canUse() {
-        return ((EggLayer) this.chicken).tye$wannaLayEgg();
+        return ((EggLayer) this.eggLayer).tye$wannaLayEgg();
     }
 
     @Override
@@ -49,28 +46,23 @@ public class LayEggGoal extends Goal {
     @Override
     public void tick() {
         if (this.target == null) return;
-        this.chicken.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 1.0D);
+        this.eggLayer.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 1.0D);
 
-        if (this.chicken.position().distanceToSqr(Vec3.atCenterOf(target)) < 2.0D || System.currentTimeMillis() >= this.timeout) {
-            this.chicken.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.chicken.getRandom().nextFloat() - this.chicken.getRandom().nextFloat()) * 0.2F + 1.0F);
-            this.chicken.spawnAtLocation(Items.EGG);
-            this.chicken.gameEvent(GameEvent.ENTITY_PLACE);
-            this.chicken.eggTime = this.chicken.getRandom().nextInt(6000) + 6000;
-            ((EggLayer) this.chicken).tye$setWannaLayEgg(false);
+        if (this.eggLayer.position().distanceToSqr(Vec3.atCenterOf(target)) < 2.0D || System.currentTimeMillis() >= this.timeout) {
+            ((EggLayer) this.eggLayer).tye$layEgg();
             this.target = null;
-            this.chicken.getNavigation().stop();
         }
     }
 
     private @Nullable BlockPos getTarget() {
-        ServerLevel level = (ServerLevel) this.chicken.level();
+        ServerLevel level = (ServerLevel) this.eggLayer.level();
         ResourceLocation dim = level.dimension().location();
 
         ToLayEgg data = ToLayEgg.get(level);
         Long2ObjectMap<LongSet> dimMap = data.posMap().get(dim);
         if (dimMap == null || dimMap.isEmpty()) return null;
 
-        ChunkPos chickenChunk = this.chicken.chunkPosition();
+        ChunkPos chickenChunk = this.eggLayer.chunkPosition();
         int radius = EggConfig.RADIUS.get();
 
         for (int chunkX = chickenChunk.x - radius; chunkX <= chickenChunk.x + radius; chunkX++) {
